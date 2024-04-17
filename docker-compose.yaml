@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  loadbalencer:
+    build:
+      context: ./nginx
+      dockerfile: dockerfile
+    restart: always
+    container_name: nginx
+    ports:
+      - "2660:80"
+    networks:
+      - server
+
+  server:
+    build:
+      context: .
+      dockerfile: dockerfile
+    volumes:
+      - "./src:/app"
+    networks:
+      - server
+    
+networks: 
+  server:
+    driver: bridge
