@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "LuticaLabServer"
+name = "lutica_lab_server"
 version = "0.1.0"
