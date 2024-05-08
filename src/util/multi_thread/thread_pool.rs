@@ -1,7 +1,15 @@
 pub mod multi_thread
 {
-    use std::thread;
-    pub struct ThreadPool {
+    use std::{fmt::Error, thread};
+    use async_std::{
+        io::BufReader,
+        net::{TcpListener, TcpStream, ToSocketAddrs},
+        prelude::*,
+        task,
+    };
+    use futures::channel::mpsc;
+    use futures::sink::SinkExt;
+    use futures::{select, FutureExt};    pub struct ThreadPool {
         workers: Vec<Worker>,
     }
     
@@ -13,7 +21,7 @@ pub mod multi_thread
             let mut workers = Vec::with_capacity(size);
             
             for id in 0..size {
-                workers.push(Worker::new(id));
+                //workers.push(Worker::new(id));
             }
             
             ThreadPool {
@@ -24,16 +32,20 @@ pub mod multi_thread
     
     struct Worker {
         id: usize,
-        thread: thread::JoinHandle<()>,
+        thread: thread::JoinHandle< Result<(),Error>>,
+        work : fn() -> Result<(),Error>,
     }
     
     impl Worker {
-        fn new(id: usize) -> Worker {
-            let thread = thread::spawn(|| {});
-            
+        fn new(&self,id: usize) -> Worker { 
+            let thread = thread::spawn(self.work);
+
             Worker {
                 id,
                 thread,
+                work : || -> Result<(),Error> {
+                    Ok(())
+                }
             }
         }
     }

@@ -1,34 +1,35 @@
 pub mod socket_manager 
 {
-    use std::net::*;
-    use std::collections::HashMap;
-    // Socket들의 연결을 관리하고자 하는 모듈.
-    pub trait ConnectManager {
-        fn regist (&mut self,target:TcpStream);
-    }
-    
-    pub struct UserConnectionTCP
-    {
-        connection_id:i32,
-        connect_socket:TcpStream
-    }
+    use std::{
+        collections::hash_map::{Entry, HashMap},
+        future::Future,
+        sync::Arc,
+    };
+    use async_std::{
+        io::BufReader,
+        net::{TcpListener, TcpStream, ToSocketAddrs},
+        prelude::*,
+        task,
+    };
+    use super::super::types::queue_type::{Sender, Receiver};
+    #[derive(Debug)]
+    enum Void {}
 
-    pub struct UserConnectionTCPManager
+    pub enum SocketObject // 소켓 접선에 따라 생성되는 오브젝트들
     {
-        connections : HashMap<i32,UserConnectionTCP>,
-        last_id : i32
-    }
-
-    impl ConnectManager for UserConnectionTCPManager {
-        fn regist (&mut self,target:TcpStream ) {
-            let conn = UserConnectionTCP
-            {
-                connection_id : self.last_id,
-                connect_socket : target
-            };
-            self.connections.insert(self.last_id, conn);
-            self.last_id += 1;
+        Connection{ // 연결
+            pid : String, // 보낸 사람.
+            stream : Arc<TcpStream>, // 소켓 스트림
+            shutdown : Receiver<Void>,
+        },
+        NormalMessage // 일반 메시지
+        {
+            from : String, // 보낸 사람
+            to : Vec<String>, // 대상
+            order : i64, // 명령어
+            message : String, // 메시지
         }
     }
+    
 }
 
