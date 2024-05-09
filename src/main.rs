@@ -1,4 +1,4 @@
-
+use controllers::accept_controller::accept_loop;
 mod util;
 use std;
 
@@ -8,20 +8,18 @@ use async_std::{
     prelude::*,
     task,
 };
+use futures::channel::mpsc;
 
 use std::{
     collections::hash_map::{Entry, HashMap},
     future::Future,
     sync::Arc,
 };
+mod controllers;
 
 
 // https://book.async.rs/tutorial/handling_disconnection
 fn main() {
-    task::block_on(accept_loop("127.0.0.1:8080")).unwrap();
+    task::block_on(accept_loop("127.0.0.1:8080"));
 }
 
-fn accept_loop(addr:impl ToSocketAddrs) -> Future<util::types::queue_type::queue_type::Result<()>>
-{
-
-}

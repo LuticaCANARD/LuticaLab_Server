@@ -7,6 +7,7 @@ pub mod multi_thread
         prelude::*,
         task,
     };
+    use super::super::super::super::util::types::queue_type::queue_type as q_type;
     use futures::channel::mpsc;
     use futures::sink::SinkExt;
     use futures::{select, FutureExt};    
@@ -50,5 +51,15 @@ pub mod multi_thread
                 work
             }
         }
+    }
+    fn spawn_and_log_error<F>(fut: F) -> task::JoinHandle<()>
+    where
+        F: Future<Output = q_type::Result<()>> + Send + 'static,
+    { // 스레드를 만들고 에러시 로그를 남기고 죽는다.
+        task::spawn(async move {
+            if let Err(e) = fut.await {
+                eprintln!("{}", e)
+            }
+        })
     }
 }

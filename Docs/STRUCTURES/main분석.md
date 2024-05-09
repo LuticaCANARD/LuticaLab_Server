@@ -1,5 +1,7 @@
 # Rust 서버 기반코드 분석
-> ORIGIN : https://book.async.rs/tutorial/handling_disconnection
+
+> ORIGIN : [https://book.async.rs/tutorial/handling_disconnection]
+
 ## 제반
 
 ### 이벤트 객체
@@ -64,9 +66,11 @@ async fn accept_loop(addr: impl ToSocketAddrs) -> Result<()> {
     while let Some(stream) = incoming.next().await { // 뭔가 stream이 온다면!
         let stream = stream?; // 그 객체를 받는다.~> 에러시 전파
         println!("Accepting from: {}", stream.peer_addr()?); 
-        spawn_and_log_error(connection_loop(
-            broker_sender.clone(), // 참조 메모리를 복제해야함. 
-            stream)); // 
+        spawn_and_log_error(
+            connection_loop(
+                broker_sender.clone(), // 참조 메모리를 복제해야함. 
+                stream)
+            ); // 
     }
     drop(broker_sender); // 메모리 정리한다.
     broker_handle.await; // 브로커(메세지 전달자)도 대기한다.
