@@ -9,7 +9,8 @@ pub mod multi_thread
     };
     use futures::channel::mpsc;
     use futures::sink::SinkExt;
-    use futures::{select, FutureExt};    pub struct ThreadPool {
+    use futures::{select, FutureExt};    
+    pub struct ThreadPool {
         workers: Vec<Worker>,
     }
     
@@ -29,23 +30,24 @@ pub mod multi_thread
             }
         }
     }
-    
-    struct Worker {
+    ///
+    /// Worker는 추적 id와 업무인 work, 실행중인 thread를 가진다.
+    struct Worker { 
         id: usize,
         thread: thread::JoinHandle< Result<(),Error>>,
         work : fn() -> Result<(),Error>,
     }
     
     impl Worker {
-        fn new(&self,id: usize) -> Worker { 
-            let thread = thread::spawn(self.work);
+        ///
+        /// 생성과 함께 thread 시작함.
+        fn new(&self,id: usize,work:fn() -> Result<(),Error>) -> Worker { 
+            let thread = thread::spawn(work);
 
             Worker {
                 id,
                 thread,
-                work : || -> Result<(),Error> {
-                    Ok(())
-                }
+                work
             }
         }
     }

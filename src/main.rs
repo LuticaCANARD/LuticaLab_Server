@@ -21,7 +21,7 @@ fn main() {
     task::block_on(accept_loop("127.0.0.1:8080")).unwrap();
 }
 
-fn accept_loop(addr:impl ToSocketAddrs) -> util::types::queue_type::queue_type::Result<()> 
+fn accept_loop(addr:impl ToSocketAddrs) -> Future<util::types::queue_type::queue_type::Result<()>>
 {
 
 }
