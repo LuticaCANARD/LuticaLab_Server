@@ -35,14 +35,6 @@ pub async fn connection_loop(
         stream: stream.clone(),
         shutdown: shutdown_receiver,
     };
-
-//     * BrokerMessage{
-//        from: name.clone(),
-//        to: vec![],
-//        order: 0,
- //       reference: Arc::new(SocketObject::Connection(connection))
-//   }
-     
     let sent_event = broker.send( 
         generate_connect_broker_message(
         connection
