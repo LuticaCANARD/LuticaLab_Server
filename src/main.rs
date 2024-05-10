@@ -20,6 +20,6 @@ mod controllers;
 
 // https://book.async.rs/tutorial/handling_disconnection
 fn main() {
-    task::block_on(accept_loop("127.0.0.1:8080"));
+    let _res = task::block_on(accept_loop("127.0.0.1:8080"));
 }
 

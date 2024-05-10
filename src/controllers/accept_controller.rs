@@ -1,4 +1,3 @@
-use crate::util::socket::socket_manager::socket_manager::BrokerMessage;
 
 use super::{super::util, connection_loop};
 use async_std::{

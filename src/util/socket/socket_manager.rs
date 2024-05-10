@@ -22,57 +22,33 @@ pub mod socket_manager
     {
         Connection(Connection), // 연결
         NormalMessage(NormalMessage), // 일반 메시지
-        BrokerMessage(BrokerMessage), // 브로커에 전달되는 메시지
     }
     #[derive(Clone)]
     pub struct NormalMessage {
         from : String, // 보낸 사람
         to : Vec<String>, // 대상
         order : i64, // 명령어
-        message : String, // 메시지
+        pub message : String, // 메시지
     }
-    pub struct BrokerMessage
-    {
-        from : String,
-        to:Vec<String>,
-        order:i64,
-        reference : Arc<SocketObject> // 다른 메시지를 가르키는 스마트포인터!
-    }
-    pub fn make_broker_message(from:String,to:Vec<String>,order:i64,reference:Arc<SocketObject>)->BrokerMessage
-    {
-        return BrokerMessage{
-            from,
-            to,
-            order,
-            reference
-        };
-    }
-    pub fn generate_broker_message(to:Vec<String>,
-    msg:&dyn MsgTrait
-    )->BrokerMessage{
-        let origin_msg = msg.get_socket_object();
-        return BrokerMessage{
-            from:msg.get_from(),
-            to:to.clone(),
-            order:msg.get_order(),
-            reference:Arc::new(origin_msg)
-        };
-    }
-    pub fn generate_connect_broker_message(
-        connection:Connection
-    )->BrokerMessage{
-        return BrokerMessage{
-            from:connection.pid.clone(),
-            to:vec![],
-            order:0,
-            reference:Arc::new(SocketObject::Connection(connection))
-        };
+    impl NormalMessage {
+        pub fn get_msg(&self)->String {
+            return self.message.clone()
+        }
+        pub fn new(from:String,to:Vec<String>,order:i64,message:String)->Self {
+            return NormalMessage {
+                from,
+                to,
+                order,
+                message
+            }
+        }
     }
 
     pub trait MsgTrait {
         fn get_from(&self)->String;
         fn get_order(&self)->i64;
         fn get_socket_object(&self)->SocketObject;
+        fn get_destnations(&self)->Vec<String>;
     }
     impl MsgTrait for NormalMessage {
         fn get_from(&self)->String {
@@ -83,6 +59,9 @@ pub mod socket_manager
         }
         fn get_socket_object(&self)->SocketObject {
             return SocketObject::NormalMessage(self.clone())
+        }
+        fn get_destnations(&self)->Vec<String> {
+            return self.to.clone()
         }
     }
     
