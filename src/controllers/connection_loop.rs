@@ -15,7 +15,7 @@ use std::{
 };
 
 use util::types::queue_type::queue_type::{Sender, Receiver};
-use util::socket::socket_manager::socket_manager::{Connection,SocketObject,BrokerMessage,Void};
+use util::socket::socket_manager::socket_manager::{Connection,SocketObject,BrokerMessage,Void,generate_broker_message,generate_connect_broker_message};
 use util::types::queue_type::queue_type as q_type;
 pub async fn connection_loop(
     mut broker: Sender<BrokerMessage>,
@@ -35,12 +35,18 @@ pub async fn connection_loop(
         stream: stream.clone(),
         shutdown: shutdown_receiver,
     };
-    broker.send(BrokerMessage{
-        from: name.clone(),
-        to: vec![],
-        order: 0,
-        reference: Arc::new(SocketObject::Connection(connection))
-    });
+
+//     * BrokerMessage{
+//        from: name.clone(),
+//        to: vec![],
+//        order: 0,
+ //       reference: Arc::new(SocketObject::Connection(connection))
+//   }
+     
+    let sent_event = broker.send( 
+        generate_connect_broker_message(
+        connection
+    ));
 
     Ok(())
 }

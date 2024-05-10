@@ -13,7 +13,6 @@ pub mod socket_manager
     use super::super::types::queue_type::{Sender, Receiver};
     #[derive(Debug)]
     pub enum Void {}
-
     pub struct Connection{ // 연결
         pub pid : String, // 보낸 사람.
         pub stream : Arc<TcpStream>, // 소켓 스트림
@@ -57,6 +56,16 @@ pub mod socket_manager
             to:to.clone(),
             order:msg.get_order(),
             reference:Arc::new(origin_msg)
+        };
+    }
+    pub fn generate_connect_broker_message(
+        connection:Connection
+    )->BrokerMessage{
+        return BrokerMessage{
+            from:connection.pid.clone(),
+            to:vec![],
+            order:0,
+            reference:Arc::new(SocketObject::Connection(connection))
         };
     }
 

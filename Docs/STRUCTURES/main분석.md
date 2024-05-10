@@ -141,8 +141,8 @@ async fn connection_writer_loop(
 
 async fn broker_loop(events: Receiver<Event>) {
     let (disconnect_sender, mut disconnect_receiver) = // 1
-        mpsc::unbounded::<(String, Receiver<String>)>();
-    let mut peers: HashMap<String, Sender<String>> = HashMap::new();
+        mpsc::unbounded::<(String, Receiver<String>)>(); // pair로 전달받음.
+    let mut peers: HashMap<String, Sender<String>> = HashMap::new(); 
     let mut events = events.fuse();
     loop {
         let event = select! {
