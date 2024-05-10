@@ -48,7 +48,7 @@ pub mod socket_manager
             reference
         };
     }
-    pub unsafe fn  generate_broker_message(to:Vec<String>,
+    pub fn generate_broker_message(to:Vec<String>,
     msg:&dyn MsgTrait
     )->BrokerMessage{
         let origin_msg = msg.get_socket_object();
