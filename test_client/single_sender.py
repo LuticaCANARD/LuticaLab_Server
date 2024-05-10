@@ -17,12 +17,3 @@ client.send("Hello, server3".encode()) # Send a message to the server
 
 
 client.close() # Close the connection
-
-#client.connect((ip, port)) # Connect to the server
-client2 = socket(AF_INET, SOCK_STREAM) # Create a socket object
-client2.connect((ip, port)) # Connect to the server
-# 이하는 제 02차 연결...
-client2.send("CNN2\n".encode()) # Send a message to the server
-client2.send("Hello, server3".encode()) # Send a message to the server
-client2.close() # Close the connection
-
