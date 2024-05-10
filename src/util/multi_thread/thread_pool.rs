@@ -52,7 +52,7 @@ pub mod multi_thread
             }
         }
     }
-    fn spawn_and_log_error<F>(fut: F) -> task::JoinHandle<()>
+    pub fn spawn_and_log_error<F>(fut: F) -> task::JoinHandle<()>
     where
         F: Future<Output = q_type::Result<()>> + Send + 'static,
     { // 스레드를 만들고 에러시 로그를 남기고 죽는다.
