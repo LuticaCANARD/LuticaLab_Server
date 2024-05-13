@@ -2,7 +2,7 @@
 
 ## 총체적 개념
 
-- 이하의 설계서는 TCP/IP의 5단계 전반의 user control plane.
+- 이하의 설계서는 TCP/IP의 5단계 전반의 user control plane의 설계임.
 
 ### Flow
 
