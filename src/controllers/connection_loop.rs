@@ -11,9 +11,7 @@ use async_std::{
 use futures::channel::mpsc;
 
 use std::{
-    collections::hash_map::{Entry, HashMap},
-    future::Future,
-    sync::Arc,
+    borrow::BorrowMut, collections::hash_map::{Entry, HashMap}, future::Future, sync::Arc
 };
 use sha256::{digest, try_digest};
 
@@ -31,11 +29,9 @@ pub async fn connection_loop(
     };
     let reader = BufReader::new(&*stream);
     let mut lines = reader.lines();
-
-    let mut name = match lines.next().await {
-        Some(Ok(name)) => name,
-        _ => return Err("Failed to read from socket".into()),
-    };
+    let mut conn_identifier = stream.as_ref().peer_addr().unwrap().to_string();
+    let mut name = String::from("conn_");
+    name.push_str(conn_identifier.as_str());
     name.push_str(connector_address.to_string().as_str());
     name = digest(name.as_bytes()).to_string();
     let (shutdown_sender, shutdown_receiver) = mpsc::unbounded::<Void>();
@@ -47,13 +43,18 @@ pub async fn connection_loop(
     broker.send( 
         SocketObject::Connection(connection)
     ).await.unwrap();
+    let length: [u8; 1] = [(name.len() as u8)];
+    stream.as_ref().write(&length).await?;
     stream.as_ref().write_all(name.as_bytes()).await?;
     print!("{} conn... \n", name);
+    stream.as_ref().write("Connected\n".as_bytes()).await?;
     while let Some(line) = lines.next().await {
         let line = line?;
-        print!("{}: {}\n", name, line.replace("\\n", "\n"));
+        print!("{}: {}\n", name, line.as_str());
         let msg = NormalMessage::new(name.clone(), vec![], 0, line);
         broker.send(SocketObject::NormalMessage(msg)).await.unwrap();
     }
+    stream.as_ref().flush().await?;
+    
     Ok(())
 }

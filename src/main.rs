@@ -20,6 +20,7 @@ mod controllers;
 
 // https://book.async.rs/tutorial/handling_disconnection
 fn main() {
+    env!("RUST_BACKTRACE","1");
     let _res = task::block_on(accept_loop("127.0.0.1:8080"));
 }
 
