@@ -49,12 +49,16 @@ pub async fn connection_loop(
     print!("{} conn... \n", name);
     stream.as_ref().write("Connected\n".as_bytes()).await?;
     while let Some(line) = lines.next().await {
+        if line.is_err() {
+            print!("{}: Error reading line,{}\n", name,line.err().unwrap());
+            break;
+        }
         let line = line?;
         print!("{}: {}\n", name, line.as_str());
         let msg = NormalMessage::new(name.clone(), vec![], 0, line);
         broker.send(SocketObject::NormalMessage(msg)).await.unwrap();
     }
     stream.as_ref().flush().await?;
-    
+
     Ok(())
 }
